@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+        <title>BGM</title>
+    </head>
+    <body>
+        <style>
+            body {
+                background-color: #000;
+                display: flex;
+                flex-direction: column;
+                color: #fff;
+                gap: 16px;
+                margin: 0;
+                padding: 20px;
+                height: 100vh;
+                box-sizing: border-box;
+                font-family: "DotGothic16", sans-serif;
+                user-select: none;
+                overscroll-behavior: none;
+                touch-action: none;
+            }
+            #panel {
+                display: flex;
+                gap: 16px;
+                flex: 1;
+                border: 1px solid #fff;
+                padding: 16px;
+                max-width: 700px;
+            }
+            #panel>div {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+                justify-content: center;
+                flex: 1;
+                border: 1px solid #fff;
+                text-align: center;
+            }
+            audio {
+                display: none;
+            }
+            button {
+                background-color: #ff0;
+                border: 0;
+                border-radius: 0px;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                user-select: none;
+                transition: all 0.3s;
+                cursor: pointer;
+                outline: none !important;
+                font-family: "DotGothic16", sans-serif;
+            }
+            #stop {
+                background-color: #f00;
+                width: 50px;
+                height: 50px;
+                border: 3px solid #6b6b6b;
+            }
+            audio+label {
+                background: linear-gradient(270deg, #000 10px, #6b6b6b 11px, #6b6b6b 29px, #000 30px);
+                padding-top: 40px;
+                height: 80px;
+                box-sizing: border-box;
+                transition: padding-top 0.1s;
+            }
+            input[type="number"] {
+                width: 50px;
+                background-color: #000;
+                color: #fff;
+                border: 1px solid #fff;
+                text-align: center;
+                font-family: "DotGothic16", sans-serif;
+            }
+        </style>
+        <div id="panel">
+            <div id="panel1">
+                <p>Warning Sound</p>
+                Playing Status: <span class="status">Stopped</span>
+                <audio src="./warning.mp3" id="audio1" loop></audio>
+                <label>
+                    <button data-num="1"></button>
+                </label>
+                <label>
+                    To crying: <input type="number" id="delayInput" min="0" value="3"> s
+                </label>
+            </div>
+            <div id="panel2">
+                <p>Crying Sound</p>
+                Playing Status: <span class="status">Stopped</span>
+                <audio src="./crying.mp3" id="audio2"></audio>
+                <label>
+                    <button data-num="2"></button>
+                </label>
+            </div>
+            <div>
+                All Stop
+                <button id="stop"></button>
+            </div>
+        </div>
+        </body>
+        <script>
+            document.addEventListener('touchstart', function(event){
+                event.preventDefault();
+            });
+            
+            document.oncontextmenu = function () {
+                return false;
+            }
+
+            let timer = null;
+            document.querySelectorAll("button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const num = btn.dataset.num;
+                    if(num) {
+                        toggleAudio(num);
+                    } else {
+                        toggleAudio("1", "off");
+                        toggleAudio("2", "off");
+                    }
+                });
+            });
+            document.getElementById("audio2").addEventListener("ended", function(e) {
+                toggleAudio("2", "off");
+            });
+            function isPlaying(audio) {
+                return !audio.paused && !audio.ended && audio.currentTime > 0;
+            }
+            
+            function playAudio1() {
+                const audio1 = document.getElementById('audio1');
+                const audio2 = document.getElementById('audio2');
+                const delayInput = document.getElementById('delayInput');
+                const delaySec = parseFloat(delayInput.value) || 0;
+
+                timer = setTimeout(() => {
+                    if(isPlaying(audio1)) {
+                        toggleAudio("2", "on");
+                    }
+                }, delaySec * 1000);
+            }
+
+            function toggleAudio(num, shift) {
+                const btn = document.querySelector("#panel" + num + " button");
+                const audio = document.getElementById("audio" + num);
+                const label = document.querySelector("#audio" + num + "+label");
+                const status = document.querySelector("#panel" + num + ">.status");
+                const sh = shift=="off" ? true : shift=="on" ? false : null;
+                if(isPlaying(audio)||sh){
+                    audio.pause();
+                    audio.currentTime = 0;
+                    btn.style.backgroundColor = "#ff0";
+                    status.textContent = "Stopped";
+                    label.style.paddingTop = "40px";
+                    if(num === "1") {
+                        clearTimeout(timer);
+                    }
+                } else {
+                    audio.play();
+                    btn.style.backgroundColor = "#0f0";
+                    status.textContent = "Playing";
+                    label.style.paddingTop = "0";
+                    if(num === "1") {
+                        playAudio1();
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
