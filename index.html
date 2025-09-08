@@ -116,6 +116,8 @@
                 return false;
             }
 
+            document.getElementById("audio1").volume = 0.5;
+
             let timer = null;
             document.querySelectorAll("button").forEach(btn => {
                 btn.addEventListener("click", () => {
@@ -160,7 +162,7 @@
                 const label = document.querySelector("#audio" + num + "+label");
                 const status = document.querySelector("#panel" + num + ">.status");
                 const sh = shift=="off" ? true : shift=="on" ? false : null;
-                if(isPlaying(audio)||sh){
+                if(isPlaying(audio)||sh=="off"){
                     audio.pause();
                     audio.currentTime = 0;
                     btn.style.backgroundColor = "#ff0";
@@ -169,7 +171,7 @@
                     if(num === "1") {
                         clearTimeout(timer);
                     }
-                } else {
+                } else if ((!isPlaying(audio))||sh=="on"){
                     audio.play();
                     btn.style.backgroundColor = "#0f0";
                     status.textContent = "Playing";
@@ -182,3 +184,4 @@
         </script>
     </body>
 </html>
+
