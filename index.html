@@ -90,7 +90,7 @@
                     <button data-num="1"></button>
                 </label>
                 <label>
-                    To cry: <input type="number" id="delayInput" min="0" value="40"> s
+                    To cry: <input type="number" id="delayInput" min="0" value="10"> s
                 </label>
             </div>
             <div id="panel2">
@@ -111,7 +111,7 @@
             document.addEventListener('touchstart', function(event){
                 event.preventDefault();
             });
-            
+
             document.oncontextmenu = function () {
                 return false;
             }
@@ -130,6 +130,12 @@
             });
             document.getElementById("audio2").addEventListener("ended", function(e) {
                 toggleAudio("2", "off");
+               
+                setTimeout(() => {
+                    if(isPlaying(document.getElementById('audio1'))) {
+                        toggleAudio("1", "off");
+                    }
+                }, 2 * 1000); 
             });
             function isPlaying(audio) {
                 return !audio.paused && !audio.ended && audio.currentTime > 0;
@@ -175,6 +181,4 @@
             }
         </script>
     </body>
-
 </html>
-
