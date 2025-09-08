@@ -162,7 +162,7 @@
                 const label = document.querySelector("#audio" + num + "+label");
                 const status = document.querySelector("#panel" + num + ">.status");
                 const sh = shift=="off" ? true : shift=="on" ? false : null;
-                if(isPlaying(audio)||sh=="off"){
+                if(isPlaying(audio)||sh){
                     audio.pause();
                     audio.currentTime = 0;
                     btn.style.backgroundColor = "#ff0";
@@ -171,7 +171,7 @@
                     if(num === "1") {
                         clearTimeout(timer);
                     }
-                } else if ((!isPlaying(audio))||sh=="on"){
+                } else {
                     audio.play();
                     btn.style.backgroundColor = "#0f0";
                     status.textContent = "Playing";
@@ -184,4 +184,5 @@
         </script>
     </body>
 </html>
+
 
